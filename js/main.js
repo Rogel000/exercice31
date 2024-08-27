@@ -38,7 +38,7 @@ document.getElementById('paymentBtn').addEventListener('click', function() {
         price = 6.00;
     }
 
-    showMessage("successBox", `Temps de stationnement: ${durationInMinutes} minutes. Prix à payer: €${price.toFixed(2)} pour ${licencePlate}`);
+    showMessage("messageBox", `Temps de stationnement: ${durationInMinutes} minutes. Prix à payer: €${price.toFixed(2)} pour ${licencePlate}`);
 
     // Reset
     startTime = null;
