@@ -3,10 +3,13 @@ import Vehicule from './classe/vehicule.js';
 let startTime = null;
 let currentVehicle = null;
 
-document.getElementById('enterBtn').addEventListener('click', function() {
-    const licencePlate = document.getElementById('licencePlate').value;
+document.getElementById('enterBtn').addEventListener('click', handleEnter);
+document.getElementById('paymentBtn').addEventListener('click', handlePayment);
 
-    if (licencePlate === "") {
+function handleEnter() {
+    const licencePlate = getLicencePlate();
+
+    if (!licencePlate) {
         showMessage("alertBox", "Veuillez entrer une immatriculation valide.");
         return;
     }
@@ -14,37 +17,46 @@ document.getElementById('enterBtn').addEventListener('click', function() {
     currentVehicle = new Vehicule(licencePlate); 
     startTime = new Date(); 
     showMessage("successBox", `Ticket obtenu pour ${licencePlate} !`);
-   
-});
+}
 
-document.getElementById('paymentBtn').addEventListener('click', function() {
-    const licencePlate = document.getElementById('licencePlate').value;
+function handlePayment() {
+    const licencePlate = getLicencePlate();
+
     if (!startTime) {
-        showMessage("alertBox", `Veuillez d'abord obtenir un ticket pour ${licencePlate} `);
+        showMessage("alertBox", `Veuillez d'abord obtenir un ticket pour ${licencePlate}.`);
         return;
     }
 
-    const endTime = new Date();
-    const durationInMinutes = Math.floor((endTime - startTime) / 60000); 
-    let price; 
-
-    if (durationInMinutes <= 15) {
-        price = 0.80;
-    } else if (durationInMinutes <= 30) {
-        price = 1.30;
-    } else if (durationInMinutes <= 45) {
-        price = 1.70;
-    } else {
-        price = 6.00;
-    }
+    const durationInMinutes = calculateDurationInMinutes(startTime, new Date());
+    const price = calculatePrice(durationInMinutes);
 
     showMessage("messageBox", `Temps de stationnement: ${durationInMinutes} minutes. Prix à payer: €${price.toFixed(2)} pour ${licencePlate}`);
 
-    // Reset
+    
+    reset();
+}
+
+function getLicencePlate() {
+    return document.getElementById('licencePlate').value.trim();
+}
+
+function calculateDurationInMinutes(start, end) {
+    return Math.floor((end - start) / 60000); 
+}
+
+function calculatePrice(durationInMinutes) {
+    if (durationInMinutes <= 15) return 0.80;
+    if (durationInMinutes <= 30) return 1.30;
+    if (durationInMinutes <= 45) return 1.70;
+    return 6.00;
+}
+
+function reset() {
     startTime = null;
     currentVehicle = null;
+    document.getElementById('licencePlate').value = ''; 
     document.querySelector('.result').innerText = ''; 
-});
+}
 
 function showMessage(boxId, message) {
     const box = document.getElementById(boxId);
@@ -54,3 +66,4 @@ function showMessage(boxId, message) {
         box.style.display = 'none';
     }, 5000);
 }
+
