@@ -6,7 +6,9 @@ let vehicules = JSON.parse(localStorage.getItem("vehicules")) || [];
 document.getElementById("enterBtn").addEventListener("click", handleEnter);
 document.getElementById("paymentBtn").addEventListener("click", handlePayment);
 document.getElementById("searchBtn").addEventListener("click", handleSearch);
-// document.getElementById("dateRangeBtn").addEventListener("click", handleDateRange);
+document
+  .getElementById("dateRangeBtn")
+  .addEventListener("click", handleDateRange);
 
 function handleEnter() {
   const licencePlate = getLicencePlate("enter");
@@ -78,7 +80,7 @@ function getLicencePlate(action) {
   } else if (action === "search") {
     plate = document.getElementById("searchPlate").value.trim();
   }
-  console.log("Plate value from input:", plate);
+//   console.log("Plate value from input:", plate);
   return plate.length > 0 ? plate : null;
 }
 
@@ -110,7 +112,7 @@ function showMessage(boxId, message) {
 
 function handleSearch() {
   const licencePlate = getLicencePlate("search");
-  console.log("Licence Plate for search:", licencePlate);
+//   console.log("Licence Plate for search:", licencePlate);
   if (!licencePlate) {
     showMessage("alertBox", "Veuillez entrer une immatriculation valide.");
     return;
@@ -118,6 +120,31 @@ function handleSearch() {
 
   const history = vehicules.filter((v) => v.licencePlate === licencePlate);
   displayHistory(history, `Historique pour ${licencePlate}:`);
+}
+
+function handleDateRange() {
+    
+  const startDate = new Date(document.getElementById("startDate").value);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(document.getElementById("endDate").value);
+  endDate.setHours(23, 59, 59, 999);
+
+  if (isNaN(startDate) || isNaN(endDate)) {
+    showMessage("alertBox", "Veuillez entrer des dates valides.");
+    return;
+  }
+
+  const history = vehicules.filter((v) => {
+    const recordStartTime = new Date(v.startTime);   
+    
+
+    return recordStartTime >= startDate && endDate >= recordStartTime;
+  });
+
+  displayHistory(
+    history,
+    `Historique entre ${startDate.toLocaleString()} et ${endDate.toLocaleString()}:`
+  );
 }
 
 function displayHistory(history, message) {
@@ -159,3 +186,4 @@ function displayHistory(history, message) {
   resultBox.innerHTML = `<h4>${message}</h4>`;
   resultBox.appendChild(table);
 }
+// console.log(vehicules);
